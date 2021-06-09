@@ -1,6 +1,8 @@
 import * as dotenv from "dotenv";
 import Obniz from "obniz";
-import { Xyz } from "obniz/dist/src/parts/i2cParts";
+import {Xyz} from "obniz/dist/src/parts/i2cParts";
+import {postLineNotify} from "./libs/api";
+
 dotenv.config();
 
 const obniz = new Obniz.M5StickC(process.env.OBNIZ_ID || "");
@@ -16,6 +18,7 @@ obniz.onconnect = async function () {
         y: 0,
         z: 0,
     };
+    let isStart = false
 
     setInterval(async () => {
         accel = (await obniz.imu?.getAccelWait()) || null;
@@ -33,11 +36,19 @@ obniz.onconnect = async function () {
         prevAccel = accel;
         counter++;
 
-        if (counter > 5) {
-            // TODO ここら辺で通知の処理を挟む
-            console.log(sum.x / 5, sum.y / 5, sum.z / 5);
-            sum = { x: 0, y: 0, z: 0 };
-            counter = 0;
+        if (counter <= 5) return;
+        if (sum.x / 5 > 0.1) {
+            if (!isStart) {
+                await postLineNotify('洗濯機の稼働が開始しました')
+                isStart = true
+            }
+        } else {
+            if (isStart) {
+                await postLineNotify('洗濯機の稼働が終了しました')
+                isStart = false
+            }
         }
+        sum = {x: 0, y: 0, z: 0};
+        counter = 0;
     }, 1000);
 };

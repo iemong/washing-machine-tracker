@@ -10,7 +10,10 @@
   "author": "iemong",
   "license": "MIT",
   "devDependencies": {
+    "@types/node-fetch": "^2.5.10",
     "dotenv": "^8.2.0",
+    "form-data": "^4.0.0",
+    "node-fetch": "^2.6.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
   },
