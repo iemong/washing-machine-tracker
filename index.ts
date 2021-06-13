@@ -36,15 +36,18 @@ obniz.onconnect = async function () {
         prevAccel = accel;
         counter++;
 
-        if (counter <= 5) return;
-        if (sum.x / 5 > 0.1) {
+        if (counter <= 30) return;
+        console.log(sum)
+        if (Object.values(sum).some(v => v > 0.25)) {
             if (!isStart) {
                 await postLineNotify('洗濯機の稼働が開始しました')
+                console.log('start')
                 isStart = true
             }
         } else {
             if (isStart) {
                 await postLineNotify('洗濯機の稼働が終了しました')
+                console.log('stop')
                 isStart = false
             }
         }
